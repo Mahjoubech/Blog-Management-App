@@ -1,0 +1,231 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #7979B4;
+    height: 100vh;
+    perspective: 1000px;
+}
+
+.main {
+    height: 480px;
+    width: 310px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: 1s;
+}
+
+#signUp,
+#login {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    border-radius: 5px;
+    background: #fff;
+}
+
+#signUp {
+    z-index: 6;
+    backface-visibility: hidden;
+}
+
+#signUp .head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+#signUp .btns {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+#signUp .btns .signUp-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.3px solid black;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#signUp .btns .signUp-login-btn button {
+    padding: 10px 30px;
+    font-size: 16px;
+    outline: none;
+    border: none;
+    font: 15px bold;
+}
+
+#signUp form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 25px;
+    gap: 15px 0px;
+}
+
+#signUp form input {
+    width: 90%;
+    height: 43px;
+    outline: none;
+    border: none;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding-left: 15px;
+    font: 16px bold;
+}
+
+#signUp form #submitBtn {
+    background: linear-gradient(45deg, #324BC1, #192D8C);
+    color: #fff;
+    border-radius: 20px;
+    margin-top: 10px;
+    font: 18px bolder;
+    padding: 0;
+}
+
+#signUp .others {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+#signUp .others p span {
+    color: #4388D5;
+}
+
+#login {
+    height: 100%;
+    width: 100%;
+    transform: rotateY(180deg);
+}
+
+#login .head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+#login .btns {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+#login .btns .signUp-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.3px solid black;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#login .btns .signUp-login-btn button {
+    padding: 10px 30px;
+    font-size: 16px;
+    outline: none;
+    border: none;
+    font: 14px bold;
+}
+
+#login form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 40px;
+    gap: 20px 0px;
+}
+
+#login form input {
+    width: 90%;
+    height: 43px;
+    outline: none;
+    border: none;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding-left: 15px;
+    font: 16px bold;
+}
+
+#login form span {
+    color: #4388D5;
+    font-size: 13px;
+    position: relative;
+    left: -80px;
+    top: -10px;
+}
+
+#login form #submitBtn {
+    background: linear-gradient(45deg, #324BC1, #192D8C);
+    color: #fff;
+    border-radius: 20px;
+    margin-top: -10px;
+    font: 20px bolder;
+    padding: 0;
+}
+
+#login .others {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+#login .others p span {
+    color: #4388D5;
+}
+
+.active {
+    background: linear-gradient(45deg, #324BC1, #192D8C);
+    border-radius: 10px;
+    color: #fff;
+}
+
+.unactive {
+    background: #fff;
+    color: #000;
+}
+
+.bolgtitle {
+    color: #252c45;
+    text-align: center;
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+.bolgtitle1 {
+    color: #252c45;
+    text-align: center;
+    font-size: 24px;
+    margin-top: 5px;
+}
