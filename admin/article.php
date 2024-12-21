@@ -17,28 +17,52 @@ $sql = $cnx->query('SELECT * ,user.username as name , category.name as catname  
 $articles = $sql->fetch_all(MYSQLI_ASSOC);
 
 //add article 
-if($_SERVER['REQUEST_METHOD'] && isset($_POST['addArt'])){
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addArt'])) {
     $user = $_SESSION['user']['useId'];
-    echo $user;
-     $catg = $_POST['selectCat'];
-     $title = $_POST['titleblog'];
-     $img = $_POST['lienimage'];
-     $desc = $_POST['descrp'];
-      if(!empty($catg) && !empty($title) && !empty($img) && !empty($desc) ){
-          //insert into
-$query = $cnx-> query("INSERT INTO `article` (`userId`, `title`, `content`, `image`, `categId`) 
-           VALUES  ('$user','$title', '$desc' , '$img',' $catg')");
-            header('location : article.php');
+    $catg = $_POST['selectCat'];
+    $title = $_POST['titleblog'];
+    $img = $_POST['lienimage'];
+    $desc = $_POST['descrp'];
+
+    if (!empty($catg) && !empty($title) && !empty($img) && !empty($desc)) {
+        // Insérer dans la base de données
+        $query = $cnx->query("INSERT INTO `article` (`userId`, `title`, `content`, `image`, `categId`) 
+                              VALUES ('$user', '$title', '$desc', '$img', '$catg')");
+        if ($query) {
+            header('Location: article.php');
+        } else {
+            die("Erreur SQL : " . $cnx->error);
+        }
     }
 }
+
+
 //delet article
-//delet category
 if(isset($_GET['articleId'])){
     $catgrId = $_GET['articleId'];
  $delet = $cnx->prepare('DELETE FROM article WHERE art_Id=?');
  $delet->execute([$catgrId]); 
  header('Location: article.php');
  }
+
+
+ //get value for edit
+   //Get values
+   if(isset($_GET['articleIdedit'])){
+   
+       $id = $_GET['articleIdedit'];
+       $edit = "SELECT * FROM `article` WHERE art_Id = $id";
+       $result = mysqli_query($cnx, $edit);
+       $cos = mysqli_fetch_assoc($result);
+       if(isset($cos)) {
+           echo "<script>
+               console.log(document.getElementById('editcontform'));
+               document.addEventListener('DOMContentLoaded', () => {
+                   document.getElementById('editcontform').classList.add('actve');
+               })
+           </script>";
+       }
+   }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -206,7 +230,7 @@ if(isset($_GET['articleId'])){
                                     <td>
                                         <div class="actions ml-3">
                                             <a href="article.php?articleId=<?php echo $art['art_Id']?>"><span ><i class="fa-solid fa-trash"></i></span></a>
-                                            <span id="editbtn" class="ml-7"><i class="fa-regular fa-pen-to-square"></i></span>
+                                            <a href="article.php?articleIdedit=<?php echo $art['art_Id']?>"><span  class="ml-7 editbtn"><i class="fa-regular fa-pen-to-square"></i></span></a>
                         
                                         </div>
                                     </td>
@@ -257,53 +281,45 @@ if(isset($_GET['articleId'])){
     </div>
      </div>
 
-    <div id="editformarticle" class="containers fixed top-40 right-[-100%]  shadow-[2px_0_10px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-5 transition-all duration-700 ease-in-out z-50 ">
+
+     <!---- form edit article----->
+     <div id="editcontform" class="containers fixed top-40 right-[-100%]  shadow-[2px_0_10px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-5 transition-all duration-700 ease-in-out z-50 ">
       <div class="wrapper">
-        <section class="post">
+        <div class="post">
           <header>Update Article</header>
-          <form action="#">
+          <form method="post" action="article.php">
             <div class="content">
               <img src=".././img/1054-1728555216.jpg" alt="logo">
               <div class="details">
-                <p>Cherkaoui</p>
-                <div class="privacy">
-                  <span>Category</span>
-                  <i class="fas fa-caret-down"></i>
-                </div>
+                <p><?php echo $_SESSION['user']['username']?></p>
+                 
+                  <select name="selectCat" class="text-[11px] bg-gray-200 text-black p-2 rounded-md focus:outline-none" >
+                    <option value="" disabled selected>Select category </option>
+                    <?php foreach($category as $catg){?>
+                    <option value="<?php echo $catg['catId']?>"><?php echo $catg['name']?></option>
+                    <?php } ?>
+                  </select>
               </div>
             </div>
-            <input type="text" name="titleblog" class="titleblog"spellcheck="false" placeholder="New Title">
-            <textarea placeholder="What's on your mind, Cherkaoui?" spellcheck="false" required></textarea>
+            <input type="text" name="titleblog" class="titleblog"spellcheck="false" placeholder="Title" value="<?php if(isset($cos['title'])) echo $cos['title']?>">
+            <textarea name="descrp" placeholder="What's on your mind, Cherkaoui?" value="" spellcheck="false" required ><?php if(isset($cos['content'])) echo $cos['content']?></textarea>
            
             <div class="options">
-              <p>New image</p>
+              <input type="text" name="lienimage" id="imag" placeholder="Add Lien Src Image" value="<?php if(isset($cos['image'])) echo $cos['image']?>">
               <ul class="list">
                 <li id="uploadBtn"><img src=".././img/gallery.svg" alt="gallery"></li>
               </ul>
             </div>
-            <button type="submit">EDIT</button>
+            <button type="submit" name="edtArt">EDIT</button>
+            
           </form>
-        </section>
-        <section class="audience">
-          <header>
-            <div class="arrow-back"><i class="fas fa-arrow-left"></i></div>
-            <p>Select New Category</p>
-          </header>
-          <div class="content">
-            <p>what is category this article?</p>
-            <span>Your article will show up in News , on Blog and in search results.</span>
-          </div>
-          <ul class="list">
-            <li class="active">
-              <div class="column">
-                  <p>Category</p>
-              </div>
-              <div class="radio"></div>
-            </li>
-          </ul>
-        </section>
       </div>
     </div>
+     </div>
+
+
+
+    
 
     
     <script >
@@ -323,10 +339,10 @@ document.getElementById('addarticle').addEventListener('click', function(e) {
     e.preventDefault()
     document.getElementById('formarticle').classList.add('actve');
 });
-document.getElementById('editbtn').addEventListener('click', function(e) {
-    e.preventDefault()
-    document.getElementById('editformarticle').classList.add('actve');
-});
+// document.querySelectorAll('.editbtn').addEventListener('click', function(e) {
+//     e.preventDefault()
+//     document.getElementById('editformarticle').classList.add('actve');
+// });
     </script>
 </body>
 </html>
