@@ -119,8 +119,8 @@ if(isset($_GET['idrole'])){
                     <div class="user">
                         <div class="bg-img" style="background-image: url(img/1.jpeg)"></div>
                         
-                        <span class="las la-power-off"></span>
-                        <span>Logout</span>
+                        <a href="../logout.php"><span class="las la-power-off"></span>
+                        <span>Logout</span></a>
                     </div>
                 </div>
             </div>
