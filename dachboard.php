@@ -104,7 +104,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
                     
                     <div class="user">
                         <div class="bg-img" style="background-image: url(img/1.jpeg)"></div>
-                        <a href="signin.php"> <span class="las la-power-off"></span>
+                        <a href="logout.php"> <span class="las la-power-off"></span>
                         <span>Logout</span></a>
                       
                     </div>
