@@ -287,13 +287,13 @@ if(isset($_GET['articleId'])){
       <div class="wrapper">
         <div class="post">
           <header>Update Article</header>
-          <form method="post" action="article.php">
+          <form method="post" action="editarticle.php?ideditart=<?php echo $cos['art_Id']?>">
             <div class="content">
               <img src=".././img/1054-1728555216.jpg" alt="logo">
               <div class="details">
                 <p><?php echo $_SESSION['user']['username']?></p>
                  
-                  <select name="selectCat" class="text-[11px] bg-gray-200 text-black p-2 rounded-md focus:outline-none" >
+                  <select name="editselectCat" class="text-[11px] bg-gray-200 text-black p-2 rounded-md focus:outline-none" >
                     <option value="" disabled selected>Select category </option>
                     <?php foreach($category as $catg){?>
                     <option value="<?php echo $catg['catId']?>"><?php echo $catg['name']?></option>
@@ -301,11 +301,11 @@ if(isset($_GET['articleId'])){
                   </select>
               </div>
             </div>
-            <input type="text" name="titleblog" class="titleblog"spellcheck="false" placeholder="Title" value="<?php if(isset($cos['title'])) echo $cos['title']?>">
-            <textarea name="descrp" placeholder="What's on your mind, Cherkaoui?" value="" spellcheck="false" required ><?php if(isset($cos['content'])) echo $cos['content']?></textarea>
+            <input type="text" name="edittitleblog" class="titleblog"spellcheck="false" placeholder="Title" value="<?php if(isset($cos['title'])) echo $cos['title']?>">
+            <textarea name="editdescrp" placeholder="What's on your mind, Cherkaoui?" value="" spellcheck="false" required ><?php if(isset($cos['content'])) echo $cos['content']?></textarea>
            
             <div class="options">
-              <input type="text" name="lienimage" id="imag" placeholder="Add Lien Src Image" value="<?php if(isset($cos['image'])) echo $cos['image']?>">
+              <input type="text" name="editlienimage" id="imag" placeholder="Add Lien Src Image" value="<?php if(isset($cos['image'])) echo $cos['image']?>">
               <ul class="list">
                 <li id="uploadBtn"><img src=".././img/gallery.svg" alt="gallery"></li>
               </ul>
