@@ -21,7 +21,7 @@ include '.././src/datacnx.php';
     }
     if (empty($errors)) {
         //insert into
-    $query =  $cnx->query("INSERT INTO category(nom) 
+    $query =  $cnx->query("INSERT INTO category(name) 
                                 VALUES ('$nameCat')");
     header('Location: category.php');
        exit;
@@ -146,9 +146,8 @@ include '.././src/datacnx.php';
                     
                     <div class="user">
                         <div class="bg-img" style="background-image: url(img/1.jpeg)"></div>
-                        
-                        <span class="las la-power-off"></span>
-                        <span>Logout</span>
+                        <a href="../logout.php"><span class="las la-power-off"></span>
+                        <span>Logout</span></a>
                     </div>
                 </div>
             </div>
@@ -179,7 +178,7 @@ include '.././src/datacnx.php';
                     <div id="editcat" class="record-header w-[1px] h-[10px] mr-[50px]" >
                         <form method="post" action="editcategory.php?idcatgr=<?php echo $tab['catId']; ?>">
                              <div class="add">
-                          <input class="ml-5" name="nameedit" type="text" placeholder="enter Category" value="<?php echo isset($tab['nom']) ?  $tab['nom'] : '' ;?>">
+                          <input class="ml-5" name="nameedit" type="text" placeholder="enter Category" value="<?php echo isset($tab['name']) ?  $tab['name'] : '' ;?>">
                           <button type="submit" name="editcat" id="hideedit">  Edit </button>
                        </div>
                      </form>
@@ -210,7 +209,7 @@ include '.././src/datacnx.php';
                                     <td>#<?php echo $row['catId']; ?></td>
                                     <td >
 
-                                                <small class="text-[16px] ml-7"><?php echo $row['nom']; ?></small>
+                                                <small class="text-[16px] ml-7"><?php echo $row['name']; ?></small>
                                             
                                         </div>
                                     </td>
