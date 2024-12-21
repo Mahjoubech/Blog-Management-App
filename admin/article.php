@@ -13,8 +13,32 @@ $sqldata= $cnx->query('SELECT * from category ');
 $category = $sqldata->fetch_all(MYSQLI_ASSOC);
 
 //get data articles from database 
-$sql = $cnx->query('SELECT * ,user.username as name , category.nom as catname  FROM article join user on  article.userId = user.useId join category on article.categId = category.catId;');
+$sql = $cnx->query('SELECT * ,user.username as name , category.name as catname  FROM article join user on  article.userId = user.useId join category on article.categId = category.catId;');
 $articles = $sql->fetch_all(MYSQLI_ASSOC);
+
+//add article 
+if($_SERVER['REQUEST_METHOD'] && isset($_POST['addArt'])){
+    $user = $_SESSION['user']['useId'];
+    echo $user;
+     $catg = $_POST['selectCat'];
+     $title = $_POST['titleblog'];
+     $img = $_POST['lienimage'];
+     $desc = $_POST['descrp'];
+      if(!empty($catg) && !empty($title) && !empty($img) && !empty($desc) ){
+          //insert into
+$query = $cnx-> query("INSERT INTO `article` (`userId`, `title`, `content`, `image`, `categId`) 
+           VALUES  ('$user','$title', '$desc' , '$img',' $catg')");
+            header('location : article.php');
+    }
+}
+//delet article
+//delet category
+if(isset($_GET['articleId'])){
+    $catgrId = $_GET['articleId'];
+ $delet = $cnx->prepare('DELETE FROM article WHERE art_Id=?');
+ $delet->execute([$catgrId]); 
+ header('Location: article.php');
+ }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -105,8 +129,8 @@ $articles = $sql->fetch_all(MYSQLI_ASSOC);
                     <div class="user">
                         <div class="bg-img" style="background-image: url(img/1.jpeg)"></div>
                         
-                        <span class="las la-power-off"></span>
-                        <span>Logout</span>
+                        <a href="../logout.php"><span class="las la-power-off"></span>
+                        <span>Logout</span></a>
                     </div>
                 </div>
             </div>
@@ -181,7 +205,7 @@ $articles = $sql->fetch_all(MYSQLI_ASSOC);
                                     </td>
                                     <td>
                                         <div class="actions ml-3">
-                                            <span ><i class="fa-solid fa-trash"></i></span>
+                                            <a href="article.php?articleId=<?php echo $art['art_Id']?>"><span ><i class="fa-solid fa-trash"></i></span></a>
                                             <span id="editbtn" class="ml-7"><i class="fa-regular fa-pen-to-square"></i></span>
                         
                                         </div>
@@ -203,22 +227,22 @@ $articles = $sql->fetch_all(MYSQLI_ASSOC);
       <div class="wrapper">
         <div class="post">
           <header>Create Article</header>
-          <form action="#">
+          <form method="post" action="article.php">
             <div class="content">
               <img src=".././img/1054-1728555216.jpg" alt="logo">
               <div class="details">
                 <p><?php echo $_SESSION['user']['username']?></p>
                  
-                  <select class="text-[11px] bg-gray-200 text-black p-2 rounded-md focus:outline-none" >
+                  <select name="selectCat" class="text-[11px] bg-gray-200 text-black p-2 rounded-md focus:outline-none" >
                     <option value="" disabled selected>Select category </option>
                     <?php foreach($category as $catg){?>
-                    <option value="<?php echo $catg['catId']?>"><?php echo $catg['nom']?></option>
+                    <option value="<?php echo $catg['catId']?>"><?php echo $catg['name']?></option>
                     <?php } ?>
                   </select>
               </div>
             </div>
             <input type="text" name="titleblog" class="titleblog"spellcheck="false" placeholder="Title">
-            <textarea placeholder="What's on your mind, Cherkaoui?" spellcheck="false" required></textarea>
+            <textarea name="descrp" placeholder="What's on your mind, Cherkaoui?" spellcheck="false" required></textarea>
            
             <div class="options">
               <input type="text" name="lienimage" id="imag" placeholder="Add Lien Src Image">
@@ -226,11 +250,13 @@ $articles = $sql->fetch_all(MYSQLI_ASSOC);
                 <li id="uploadBtn"><img src=".././img/gallery.svg" alt="gallery"></li>
               </ul>
             </div>
-            <button type="submit">Add</button>
+            <button type="submit" name="addArt">Add</button>
+            
           </form>
       </div>
     </div>
-         
+     </div>
+
     <div id="editformarticle" class="containers fixed top-40 right-[-100%]  shadow-[2px_0_10px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-5 transition-all duration-700 ease-in-out z-50 ">
       <div class="wrapper">
         <section class="post">
