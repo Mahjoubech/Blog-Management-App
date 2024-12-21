@@ -2,21 +2,68 @@
 <?php
  session_start();
 include ("./src/datacnx.php");
+//for display data category
+ //Requets
+ $sqldata= $cnx->query('SELECT * from category order by catId Asc');
+ //Get values
+ $category = $sqldata->fetch_all(MYSQLI_ASSOC);
+//get data articles from database to blog page
+$sql = $cnx->query('SELECT * ,user.username as name , category.name as catname  FROM article join user on  article.userId = user.useId join category on article.categId = category.catId;');
+$articles = $sql->fetch_all(MYSQLI_ASSOC);
+//  //for time to creat artiicle
+//  function timeAgo($datetime) {
+//     $now = time();
+//     $time = strtotime($datetime);
+//     $diff = $now - $time;
+
+//     if ($diff < 60) {
+//         return 'just now';
+//     } elseif ($diff < 3600) {
+//         $minutes = floor($diff / 60);
+//         return $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+//     } elseif ($diff < 86400) {
+//         $hours = floor($diff / 3600);
+//         return $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
+//     } elseif ($diff < 2592000) {
+//         $days = floor($diff / 86400);
+//         return $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
+//     } else {
+//         return date('M d, Y', $time);
+//     }
+// }
+// //add article from user
+// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addArt'])) {
+//     $user = $_SESSION['user']['useId'];
+//     $catg = $_POST['selectCat'];
+//     $title = $_POST['titleblog'];
+//     $img = $_POST['lienimage'];
+//     $desc = $_POST['descrp'];
+
+//     if (!empty($catg) && !empty($title) && !empty($img) && !empty($desc)) {
+//         // Insérer dans la base de données
+//         $query = $cnx->query("INSERT INTO `article` (`userId`, `title`, `content`, `image`, `categId`) 
+//                               VALUES ('$user', '$title', '$desc', '$img', '$catg')");
+//         if ($query) {
+//             header('Location: article.php');
+//         } else {
+//             die("Erreur SQL : " . $cnx->error);
+//         }
+//     }
+// }
 
 
+// $query = "SELECT * FROM `article` ORDER BY `created_at` DESC";
+// $result = mysqli_query($cnx, $query);
+?>
 
 
-
-
-
-
-?> 
+ 
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="2">
+    <!-- <meta http-equiv="refresh" content="2"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Blog Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -160,15 +207,12 @@ include ("./src/datacnx.php");
                 <button class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 category-filter active">
                    All
                 </button>
+                <?php foreach($category as $catg){?>
+
                 <button class="bg-neutral text-white px-4 py-2 rounded hover:bg-opacity-90 category-filter">
-                    Technology
+                    <?php echo $catg['name']?>
                 </button>
-                <button class="bg-neutral text-white px-4 py-2 rounded hover:bg-opacity-90 category-filter">
-                   Travel
-                </button>
-                <button class="bg-neutral text-white px-4 py-2 rounded hover:bg-opacity-90 category-filter">
-                    Lifestyle
-                </button>
+                <?php } ?>
             </div>
         </div>
 
@@ -182,36 +226,37 @@ include ("./src/datacnx.php");
             <h2 class="text-2xl font-bold mb-4 text-secondary">
                 <i class="fas fa-pen-to-square mr-2"></i>Create New Article
             </h2>
-            <form>
+            <form method="post" action="blog.php">
                 <div class="mb-4">
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-heading mr-1"></i>Title
                     </label>
-                    <input type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <input name="titleblog" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
                 </div>
                 <div class="mb-4">
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-tag mr-1"></i>Category
                     </label>
-                    <select class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
-                        <option>Technology</option>
-                        <option>Travel</option>
-                        <option>Lifestyle</option>
+                    <select name="selectCat" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <option value="" disabled selected>Select category </option>
+                    <?php foreach($category as $catg){?>
+                    <option value="<?php echo $catg['catId']?>"><?php echo $catg['name']?></option>
+                    <?php } ?>
                     </select>
                 </div>
                 <div class="mb-4">
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-paragraph mr-1"></i>Content
                     </label>
-                    <textarea class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="6"></textarea>
+                    <textarea name="descrp" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="6"></textarea>
                 </div>
                 <div class="mb-4">
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-image mr-1"></i>Image
                     </label>
-                    <input type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <input name="lienimage" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
                 </div>
-                <button type="submit" class="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90">
+                <button name="addArt" type="submit" class="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90">
                     <i class="fas fa-paper-plane mr-1"></i>Publish
                 </button>
             </form>
@@ -220,12 +265,13 @@ include ("./src/datacnx.php");
         <!-- Articles Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Sample Article Card -->
-            <article class="bg-white rounded-lg shadow-md overflow-hidden fade-in active h-auto min-h-[600px]">
-                <img src="./img/business_img.jpg" alt="Article image" class="w-full h-48 object-cover">
+             <?php foreach($articles as $art){ ?>
+            <article class="bg-white rounded-lg shadow-md overflow-hidden fade-in active h-auto ">
+                <img src=".<?php echo $art['image']?>" alt="Article image" class="w-full h-48 object-cover">
                 <div class="p-6">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-primary text-sm font-semibold">
-                            <i class="fas fa-tag mr-1"></i>Technology
+                            <i class="fas fa-tag mr-1"></i><?php echo $art['catname']?>
                         </span>
                         <div class="flex space-x-2">
                             <button class="text-blue-500 hover:text-blue-700">
@@ -239,13 +285,13 @@ include ("./src/datacnx.php");
 
                     <div class="flex items-center mb-3 text-neutral text-sm">
                         <i class="fas fa-clock mr-2"></i>
-                        <span>2 hours ago</span>
+                        <span><?php echo $art['created_at']?></span>
                         <i class="fas fa-user mx-2"></i>
-                        <span>John Doe</span>
+                        <span><?php echo $art['name']?></span>
                     </div>
 
-                    <h3 class="text-secondary text-xl font-bold mt-2">Getting Started with Web Development</h3>
-                    <p class="text-neutral mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <h3 class="text-secondary text-xl font-bold mt-2"><?php echo $art['title']?></h3>
+                    <p class="text-neutral mt-2"><?php echo $art['content']?></p>
                     
                     <!-- Comments Section -->
                     <div class="mt-4 border-t pt-4">
@@ -297,160 +343,8 @@ include ("./src/datacnx.php");
                     </div>
                 </div>
             </article>
-            <article class="bg-white rounded-lg shadow-md overflow-hidden fade-in active h-auto min-h-[600px]">
-                <img src="./img/business_img.jpg" alt="Article image" class="w-full h-48 object-cover">
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="text-primary text-sm font-semibold">
-                            <i class="fas fa-tag mr-1"></i>Technology
-                        </span>
-                        <div class="flex space-x-2">
-                            <button class="text-blue-500 hover:text-blue-700">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="text-red-500 hover:text-red-700">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center mb-3 text-neutral text-sm">
-                        <i class="fas fa-clock mr-2"></i>
-                        <span>2 hours ago</span>
-                        <i class="fas fa-user mx-2"></i>
-                        <span>John Doe</span>
-                    </div>
-
-                    <h3 class="text-secondary text-xl font-bold mt-2">Getting Started with Web Development</h3>
-                    <p class="text-neutral mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                    
-                    <!-- Comments Section -->
-                    <div class="mt-4 border-t pt-4">
-                        <div class="comments-container">
-                            <!-- Existing Comments -->
-                            <div class="existing-comments space-y-4">
-                                <!-- Sample Comment -->
-                                <div class="bg-gray-50 p-3 rounded new-comment">
-                                    <div class="flex items-center mb-2">
-                                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">JD</div>
-                                        <div class="ml-3">
-                                            <p class="text-secondary font-semibold">John Doe</p>
-                                            <p class="text-neutral text-sm">
-                                                <i class="fas fa-clock mr-1"></i>2 hours ago
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <p class="text-secondary">Great article! Thanks for sharing.</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Comment Form -->
-                            <div class="comment-form comment-slide mt-4">
-                                <form class="space-y-4">
-                                    <input type="text" placeholder="Your name" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
-                                    <textarea placeholder="Write your comment..." class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="3"></textarea>
-                                    <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90">
-                                        <i class="fas fa-paper-plane mr-1"></i>Post Comment
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <button class="text-neutral hover:text-primary">
-                                <i class="far fa-heart"></i>
-                                <span class="ml-1">42</span>
-                            </button>
-                            <button class="text-neutral hover:text-primary comment-toggle">
-                                <i class="far fa-comment"></i>
-                                <span class="ml-1">12</span>
-                            </button>
-                        </div>
-                        <span class="text-neutral text-sm">
-                            <i class="fas fa-clock mr-1"></i>2 hours ago
-                        </span>
-                    </div>
-                </div>
-            </article>
-            <article class="bg-white rounded-lg shadow-md overflow-hidden fade-in active h-auto min-h-[600px]">
-                <img src="./img/business_img.jpg" alt="Article image" class="w-full h-48 object-cover">
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="text-primary text-sm font-semibold">
-                            <i class="fas fa-tag mr-1"></i>Technology
-                        </span>
-                        <div class="flex space-x-2">
-                            <button class="text-blue-500 hover:text-blue-700">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="text-red-500 hover:text-red-700">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center mb-3 text-neutral text-sm">
-                        <i class="fas fa-clock mr-2"></i>
-                        <span>2 hours ago</span>
-                        <i class="fas fa-user mx-2"></i>
-                        <span>John Doe</span>
-                    </div>
-
-                    <h3 class="text-secondary text-xl font-bold mt-2">Getting Started with Web Development</h3>
-                    <p class="text-neutral mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                    
-                    <!-- Comments Section -->
-                    <div class="mt-4 border-t pt-4">
-                        <div class="comments-container">
-                            <!-- Existing Comments -->
-                            <div class="existing-comments space-y-4 overflow-y-scroll max-h-[100px]">
-                                <!-- Sample Comment -->
-                                <div class="bg-gray-50 p-3 rounded new-comment">
-                                    <div class="flex items-center mb-2">
-                                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">JD</div>
-                                        <div class="ml-3">
-                                            <p class="text-secondary font-semibold">John Doe</p>
-                                            <p class="text-neutral text-sm">
-                                                <i class="fas fa-clock mr-1"></i>2 hours ago
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <p class="text-secondary">Great article! Thanks for sharing.</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Comment Form -->
-                            <div class="comment-form comment-slide mt-4">
-                                <form class="space-y-4">
-                                    <input type="text" placeholder="Your name" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
-                                    <textarea placeholder="Write your comment..." class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="3"></textarea>
-                                    <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90">
-                                        <i class="fas fa-paper-plane mr-1"></i>Post Comment
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <button class="text-neutral hover:text-primary">
-                                <i class="far fa-heart"></i>
-                                <span class="ml-1">42</span>
-                            </button>
-                            <button class="text-neutral hover:text-primary comment-toggle">
-                                <i class="far fa-comment"></i>
-                                <span class="ml-1">12</span>
-                            </button>
-                        </div>
-                        <span class="text-neutral text-sm">
-                            <i class="fas fa-clock mr-1"></i>2 hours ago
-                        </span>
-                    </div>
-                </div>
-            </article>
+             <?php }?>
+           
         </div>
     </div>
 
