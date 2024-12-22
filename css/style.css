@@ -876,7 +876,78 @@ table tbody tr {
 .actions .fa-pen-to-square:hover {
     transform: scale(1.1);
 }
+.slide-down {
+    display: none;
+    transition: all 0.5s ease-in-out;
+}
 
+.slide-down.active {
+    display: block;
+}
+
+.fade-in {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fade-in.active {
+    opacity: 1;
+}
+
+.comment-slide {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.comment-slide.active {
+    max-height: 500px;
+}
+
+.new-comment {
+    animation: slideDown 0.5s ease-out;
+}
+.adminicons{
+    position: relative;
+    left: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+   margin-left: 40px;
+   cursor: pointer;
+   transition: all 0.5s ease;
+}
+.adminicons:hover{
+    transform: scale(1.02);
+}
+
+.adminicons i{
+    font-size: 16px;
+    background-color: #22BAA0;
+    padding: 14px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.adminicons h5{
+    margin-top: 0;
+    transform: translateX(-15px);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 10px;
+}
+@keyframes slideDown {
+    from {
+        height: 0;
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        height: auto;
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 @media only screen and (max-width: 1200px) {
     .analytics {
         grid-template-columns: repeat(2, 1fr);
