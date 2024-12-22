@@ -11,9 +11,32 @@ $sqldata= $cnx->query('SELECT art_Id,title from article ');
 $artcles = $sqldata->fetch_all(MYSQLI_ASSOC);
    //get data from data base
    //get data articles from database 
-   $sql = $cnx->query('SELECT * ,user.username as name , article.title as arttitle  FROM comments join user on  comments.user_id = user.useId join article on comments.article_id = article.art_Id;');
+   $sql = $cnx->query('SELECT * ,user.username as name , article.title as arttitle  FROM comments join user on  comments.user_id = user.useId join article on comments.article_id = article.art_Id order by cmmId;');
    $cmnts= $sql->fetch_all(MYSQLI_ASSOC);
+//add cmnt
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addcmnt'])) {
+    $user = $_SESSION['user']['useId'];
+    $artc = $_POST['slctart'];
+    $title = $_POST['contcmnt'];
 
+    if (!empty($artc) && !empty($title) ) {
+        // Insérer dans la base de données
+        $query = $cnx->query("INSERT INTO `comments` (`article_id`, `user_id`, `cmnter`) 
+                              VALUES ('$artc', '$user', '$title')");
+        if ($query) {
+            header('Location: comments.php');
+        } else {
+            die("Erreur SQL : " . $cnx->error);
+        }
+    }
+}
+//delet comment
+if(isset($_GET['commId'])){
+    $cmmId = $_GET['commId'];
+ $delet = $cnx->prepare('DELETE FROM comments WHERE cmmId=?');
+ $delet->execute([$cmmId]); 
+ header('Location: comments.php');
+ }
    ?>
 
 <!DOCTYPE html>
@@ -126,11 +149,11 @@ $artcles = $sqldata->fetch_all(MYSQLI_ASSOC);
                     <form method="post" action="comments.php" class="flex ">
                         <div class="add">
                           <button type="submit" name="addcmnt"> Add </button>
-                          <input class="ml-5" name="contcmnt" type="text" placeholder="enter comment">
+                          <input class="ml-5" name="contcmnt" type="text" placeholder="enter comment" required>
                        </div>
                        <div class="browse">
                        <select name="slctart" id="">
-                                <option value="" disabled selected>Article</option>
+                                <option value="" disabled selected required>Article</option>
                                 <?php foreach($artcles as $artc){?>
                                 <option value="<?php echo $artc['art_Id'] ?>"><?php echo $artc['title'] ?></option>
 
@@ -196,8 +219,8 @@ $artcles = $sqldata->fetch_all(MYSQLI_ASSOC);
                                     </td>
                                     <td>
                                         <div class="actions ml-3">
-                                            <span ><i class="fa-solid fa-trash"></i></span>
-                                            <span class="ml-7"><i class="fa-solid fa-user-tie"></i></span>
+                                        <a href="comments.php?commId=<?php echo $cmt['cmmId']?>"><span ><i class="fa-solid fa-trash"></i></span></a>
+                                        <a href="article.php?articleIdedit=<?php echo $art['art_Id']?>"><span  class="ml-7 editbtn"><i class="fa-regular fa-pen-to-square"></i></span></a>
                         
                                         </div>
                                     </td>
