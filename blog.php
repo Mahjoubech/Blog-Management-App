@@ -150,13 +150,13 @@ if(isset($_GET['idArt'])){
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-heading mr-1"></i>Title
                     </label>
-                    <input name="titleblogedt" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <input name="titleblogedt" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" required>
                 </div>
                 <div class="mb-4">
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-tag mr-1"></i>Category
                     </label>
-                    <select name="slectCatedt" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <select name="slectCatedt" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" required>
                     <option value="" disabled selected>Select category </option>
                     <?php foreach($category as $catg){?>
                     <option value="<?php echo $catg['catId']?>"><?php echo $catg['name']?></option>
@@ -167,13 +167,13 @@ if(isset($_GET['idArt'])){
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-paragraph mr-1"></i>Content
                     </label>
-                    <textarea name="descrpedt" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="6"></textarea>
+                    <textarea name="descrpedt" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="6" required></textarea>
                 </div>
                 <div class="mb-4">
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-image mr-1"></i>Image
                     </label>
-                    <input name="lienimageedt" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <input name="lienimageedt" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" required>
                 </div>
                 <button name="addArtedt" type="submit" class="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90">
                     <i class="fas fa-paper-plane mr-1"></i>Publish
@@ -186,7 +186,7 @@ if(isset($_GET['idArt'])){
             <h2 class="text-2xl font-bold mb-4 text-secondary">
                 <i class="fas fa-pen-to-square mr-2"></i>Update Article
             </h2>
-            <form method="post" action="blog.php">
+            <form method="post" action="./admin/editblog.php?ideditart=<?php echo $cos['art_Id']?>">
                 <div class="mb-4">
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-heading mr-1"></i>New Title
