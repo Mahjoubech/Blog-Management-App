@@ -89,6 +89,9 @@ if(isset($_GET['deletcmnt'])){
  $delet->execute([$cmmId]); 
  header('Location: blog.php');
  }
+
+ //add likes
+ 
 ?>
 
 
