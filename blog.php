@@ -55,6 +55,9 @@ if(isset($_GET['idArt'])){
           
        }
    }
+  //get data articles from database 
+  $sql = $cnx->query('SELECT * ,user.username as name , article.title as arttitle  FROM comments join user on  comments.user_id = user.useId join article on comments.article_id = article.art_Id order by cmmId;');
+  $cmnts= $sql->fetch_all(MYSQLI_ASSOC);
 ?>
 
 
@@ -222,7 +225,7 @@ if(isset($_GET['idArt'])){
             </form>
         </div>
         <!-- Articles Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-8">
             <!-- Sample Article Card -->
              <?php foreach($articles as $art){ ?>
             <article class="bg-white rounded-lg shadow-md overflow-hidden fade-in active h-auto ">
@@ -248,7 +251,11 @@ if(isset($_GET['idArt'])){
                         <i class="fas fa-clock mr-2"></i>
                         <span><?php echo $art['created_at']?></span>
                         <i class="fas fa-user mx-2"></i>
+                        <?php if (isset($_SESSION['user']) && $_SESSION['user']['useId'] === $art['userId']) { ?>
+                         <span>You</span>
+                         <?php }else{?>
                         <span><?php echo $art['name']?></span>
+                        <?php }?>
                     </div>
 
                     <h3 class="text-secondary text-xl font-bold mt-2"><?php echo $art['title']?></h3>
@@ -259,25 +266,32 @@ if(isset($_GET['idArt'])){
                         <div class="comments-container">
                             <!-- Existing Comments -->
                             <div class="existing-comments space-y-4">
+
                                 <!-- Sample Comment -->
+                                 <?php foreach($cmnts as $cmt){?>
+                                 
+                                    <?php if($cmt['article_id'] === $art['art_Id']){?>
                                 <div class="bg-gray-50 p-3 rounded new-comment">
                                     <div class="flex items-center mb-2">
                                         <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">JD</div>
                                         <div class="ml-3">
-                                            <p class="text-secondary font-semibold">John Doe</p>
+                                            <p class="text-secondary font-semibold"><?php echo $cmt['name']?></p>
                                             <p class="text-neutral text-sm">
-                                                <i class="fas fa-clock mr-1"></i>2 hours ago
+                                                <i class="fas fa-clock mr-1"></i><?php echo $cmt['created_at']?>
                                             </p>
                                         </div>
                                     </div>
-                                    <p class="text-secondary">Great article! Thanks for sharing.</p>
+                                  <p class="text-secondary"><?php echo $cmt['cmnter']?></p>
                                 </div>
+                                 <?php }?>
+                                 <?php }?>
+
+                                   
                             </div>
                             
                             <!-- Comment Form -->
                             <div class="comment-form comment-slide mt-4">
                                 <form class="space-y-4">
-                                    <input type="text" placeholder="Your name" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
                                     <textarea placeholder="Write your comment..." class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="3"></textarea>
                                     <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90">
                                         <i class="fas fa-paper-plane mr-1"></i>Post Comment
@@ -340,36 +354,36 @@ if(isset($_GET['idArt'])){
             });
         });
 
-        // Add New Comment
-        document.querySelectorAll('.comment-form form').forEach(form => {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const article = form.closest('article');
-                const commentsContainer = article.querySelector('.existing-comments');
-                const nameInput = form.querySelector('input');
-                const commentInput = form.querySelector('textarea');
+        // // Add New Comment
+        // document.querySelectorAll('.comment-form form').forEach(form => {
+        //     form.addEventListener('submit', (e) => {
+        //         e.preventDefault();
+        //         const article = form.closest('article');
+        //         const commentsContainer = article.querySelector('.existing-comments');
+        //         const nameInput = form.querySelector('input');
+        //         const commentInput = form.querySelector('textarea');
 
-                const newComment = document.createElement('div');
-                newComment.className = 'bg-gray-50 p-3 rounded new-comment';
-                newComment.innerHTML = `
-                    <div class="flex items-center mb-2">
-                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">
-                            ${nameInput.value.substring(0, 2).toUpperCase()}
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-secondary font-semibold">${nameInput.value}</p>
-                            <p class="text-neutral text-sm">
-                                <i class="fas fa-clock mr-1"></i>Just now
-                            </p>
-                        </div>
-                    </div>
-                    <p class="text-secondary">${commentInput.value}</p>
-                `;
+        //         const newComment = document.createElement('div');
+        //         newComment.className = 'bg-gray-50 p-3 rounded new-comment';
+        //         newComment.innerHTML = `
+        //             <div class="flex items-center mb-2">
+        //                 <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">
+        //                     ${nameInput.value.substring(0, 2).toUpperCase()}
+        //                 </div>
+        //                 <div class="ml-3">
+        //                     <p class="text-secondary font-semibold">${nameInput.value}</p>
+        //                     <p class="text-neutral text-sm">
+        //                         <i class="fas fa-clock mr-1"></i>Just now
+        //                     </p>
+        //                 </div>
+        //             </div>
+        //             <p class="text-secondary">${commentInput.value}</p>
+        //         `;
 
-                commentsContainer.insertBefore(newComment, commentsContainer.firstChild);
-                form.reset();
-            });
-        });
+        //         commentsContainer.insertBefore(newComment, commentsContainer.firstChild);
+        //         form.reset();
+        //     });
+        // });
 
         
         // Like Button Animation
