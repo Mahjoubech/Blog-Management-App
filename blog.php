@@ -90,8 +90,55 @@ if(isset($_GET['deletcmnt'])){
  header('Location: blog.php');
  }
 
- //add likes
- 
+ // get like
+
+// $likees = [];
+// $result = $cnx->query("SELECT article_id, COUNT(*) AS total_like FROM likes GROUP BY article_id");
+// while ($row = $result->fetch_assoc()) {
+//     $likees[$row['article_id']] = $row['total_like'];
+// }
+
+// Vérifier si un utilisateur est connecté
+if (isset($_SESSION['user']['useId'])) {
+    $userId = $_SESSION['user']['useId'];
+
+    // Récupérer les articles likés par l'utilisateur
+    $userLikes = [];
+    $result = $cnx->query("SELECT article_id FROM likes WHERE userId = $userId");
+    while ($row = $result->fetch_assoc()) {
+        $userLikes[] = $row['article_id'];
+    }
+
+    // Ajouter un like
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['like'])) {
+        $articleId = $_POST['article_id'];
+        if (!in_array($articleId, $userLikes)) {
+            $query = $cnx->prepare("INSERT INTO likes (article_id, userId) VALUES (?, ?)");
+            $query->bind_param("ii", $articleId, $userId);
+            $query->execute();
+            header('Location: blog.php');
+            exit;
+        }
+    }
+
+    // Supprimer un like
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unlike'])) {
+        $articleId = $_POST['article_id'];
+        if (in_array($articleId, $userLikes)) {
+            $query = $cnx->prepare("DELETE FROM likes WHERE article_id = ? AND userId = ?");
+            $query->bind_param("ii", $articleId, $userId);
+            $query->execute();
+            header('Location: blog.php');
+            exit;
+        }
+    }
+}
+$result = $cnx->query("SELECT article_id, COUNT(*) AS total_like FROM likes GROUP BY article_id");
+while ($row = $result->fetch_assoc()) {
+    $likees[$row['article_id']] = $row['total_like'];
+}
+
+
 ?>
 
 
@@ -348,14 +395,25 @@ if(isset($_GET['deletcmnt'])){
 
                     <div class="mt-4 flex items-center justify-between">
                         <div class="flex items-center space-x-4">
-                            <button class="text-neutral hover:text-primary">
-                                <i class="far fa-heart"></i>
-                                <span class="ml-1">42</span>
-                            </button>
-                            <button class="text-neutral text-primary hover:text-primary">
-                                <i class="fas fa-heart"></i>
-                                <span class="ml-1">42</span>
-                            </button>
+
+                        <form method="POST" action="blog.php" style="display: flex;">
+    <input type="hidden" name="article_id" value="<?php echo $art['art_Id']; ?>">
+    <?php if (isset($userLikes) && in_array($art['art_Id'], $userLikes)): ?>
+        <!-- Unlike -->
+        <button type="submit" name="unlike" class="text-primary hover:text-primary bg-transparent">
+            <i class="fas fa-heart"></i>
+            <span class="ml-1"><?php echo isset($likees[$art['art_Id']]) ? $likees[$art['art_Id']] : 0; ?></span>
+        </button>
+    <?php else: ?>
+        <!-- Like -->
+        <button type="submit" name="like" class="text-neutral hover:text-primary bg-transparent">
+            <i class="far fa-heart"></i>
+            <span class="ml-1"><?php echo isset($likees[$art['art_Id']]) ? $likees[$art['art_Id']] : 0; ?></span>
+        </button>
+              <?php endif; ?>
+             </form>
+
+
                             <button class="text-neutral hover:text-primary comment-toggle">
                                 <i class="far fa-comment"></i>
                                 <span class="ml-1"> <?php echo isset($commentCounts[$art['art_Id']]) ? $commentCounts[$art['art_Id']] : 0; ?></span>
@@ -403,46 +461,11 @@ if(isset($_GET['deletcmnt'])){
             });
         });
 
-        // // Add New Comment
-        // document.querySelectorAll('.comment-form form').forEach(form => {
-        //     form.addEventListener('submit', (e) => {
-        //         e.preventDefault();
-        //         const article = form.closest('article');
-        //         const commentsContainer = article.querySelector('.existing-comments');
-        //         const nameInput = form.querySelector('input');
-        //         const commentInput = form.querySelector('textarea');
-
-        //         const newComment = document.createElement('div');
-        //         newComment.className = 'bg-gray-50 p-3 rounded new-comment';
-        //         newComment.innerHTML = `
-        //             <div class="flex items-center mb-2">
-        //                 <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">
-        //                     ${nameInput.value.substring(0, 2).toUpperCase()}
-        //                 </div>
-        //                 <div class="ml-3">
-        //                     <p class="text-secondary font-semibold">${nameInput.value}</p>
-        //                     <p class="text-neutral text-sm">
-        //                         <i class="fas fa-clock mr-1"></i>Just now
-        //                     </p>
-        //                 </div>
-        //             </div>
-        //             <p class="text-secondary">${commentInput.value}</p>
-        //         `;
-
-        //         commentsContainer.insertBefore(newComment, commentsContainer.firstChild);
-        //         form.reset();
-        //     });
-        // });
+        
+        
 
         
-        // Like Button Animation
-        // document.querySelectorAll('.fa-heart').forEach(heart => {
-        //     heart.addEventListener('click', () => {
-        //         heart.classList.toggle('fas');
-        //         heart.classList.toggle('far');
-        //         heart.closest('button').classList.toggle('text-primary');
-        //     });
-        // });
+  
     </script>
 </body>
 </html>
