@@ -82,6 +82,13 @@ $result = $cnx->query("SELECT article_id, COUNT(*) AS total_comments FROM commen
 while ($row = $result->fetch_assoc()) {
     $commentCounts[$row['article_id']] = $row['total_comments'];
 }
+//delet comment
+if(isset($_GET['deletcmnt'])){
+    $cmmId = $_GET['deletcmnt'];
+ $delet = $cnx->prepare('DELETE FROM comments WHERE cmmId=?');
+ $delet->execute([$cmmId]); 
+ header('Location: blog.php');
+ }
 ?>
 
 
@@ -294,8 +301,8 @@ while ($row = $result->fetch_assoc()) {
                                 <!-- Sample Comment -->
                                  <?php foreach($cmnts as $cmt){?>
                                  
-                                    <?php if($cmt['article_id'] === $art['art_Id']){?>
-                                <div class="bg-gray-50 p-3 rounded new-comment">
+                                    <?php if($cmt['article_id'] === $art['art_Id'] ){?>
+                                <div class="bg-gray-50 p-3 rounded new-comment ">
                                     <div class="flex items-center mb-2">
                                         <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">JD</div>
                                         <div class="ml-3">
@@ -304,6 +311,13 @@ while ($row = $result->fetch_assoc()) {
                                                 <i class="fas fa-clock mr-1"></i><?php echo $cmt['created_at']?>
                                             </p>
                                         </div>
+                                        <?php if ($_SESSION['user']['useId'] === $cmt['user_id']) { ?>
+                       
+                                      <a href="blog.php?deletcmnt=<?php echo $cmt['cmmId']?>"><button class="text-red-500 hover:text-red-700 ml-[100px]">
+                                        <i class="fas fa-trash"></i>
+                                         </button></a>
+                      
+                        <?php }?>
                                     </div>
                                   <p class="text-secondary"><?php echo $cmt['cmnter']?></p>
                                 </div>
