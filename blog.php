@@ -10,50 +10,50 @@ include ("./src/datacnx.php");
 //get data articles from database to blog page
 $sql = $cnx->query('SELECT * ,user.username as name , category.name as catname  FROM article join user on  article.userId = user.useId join category on article.categId = category.catId;');
 $articles = $sql->fetch_all(MYSQLI_ASSOC);
-//  //for time to creat artiicle
-//  function timeAgo($datetime) {
-//     $now = time();
-//     $time = strtotime($datetime);
-//     $diff = $now - $time;
+ //for time to creat artiicle
+ function timeAgo($datetime) {
+    $now = time();
+    $time = strtotime($datetime);
+    $diff = $now - $time;
 
-//     if ($diff < 60) {
-//         return 'just now';
-//     } elseif ($diff < 3600) {
-//         $minutes = floor($diff / 60);
-//         return $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
-//     } elseif ($diff < 86400) {
-//         $hours = floor($diff / 3600);
-//         return $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
-//     } elseif ($diff < 2592000) {
-//         $days = floor($diff / 86400);
-//         return $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
-//     } else {
-//         return date('M d, Y', $time);
-//     }
-// }
-// //add article from user
-// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addArt'])) {
-//     $user = $_SESSION['user']['useId'];
-//     $catg = $_POST['selectCat'];
-//     $title = $_POST['titleblog'];
-//     $img = $_POST['lienimage'];
-//     $desc = $_POST['descrp'];
+    if ($diff < 60) {
+        return 'just now';
+    } elseif ($diff < 3600) {
+        $minutes = floor($diff / 60);
+        return $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+    } elseif ($diff < 86400) {
+        $hours = floor($diff / 3600);
+        return $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
+    } elseif ($diff < 2592000) {
+        $days = floor($diff / 86400);
+        return $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
+    } else {
+        return date('M d, Y', $time);
+    }
+}
+//add article from user
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addArt'])) {
+    $user = $_SESSION['user']['useId'];
+    $catg = $_POST['selectCat'];
+    $title = $_POST['titleblog'];
+    $img = $_POST['lienimage'];
+    $desc = $_POST['descrp'];
 
-//     if (!empty($catg) && !empty($title) && !empty($img) && !empty($desc)) {
-//         // Insérer dans la base de données
-//         $query = $cnx->query("INSERT INTO `article` (`userId`, `title`, `content`, `image`, `categId`) 
-//                               VALUES ('$user', '$title', '$desc', '$img', '$catg')");
-//         if ($query) {
-//             header('Location: article.php');
-//         } else {
-//             die("Erreur SQL : " . $cnx->error);
-//         }
-//     }
-// }
+    if (!empty($catg) && !empty($title) && !empty($img) && !empty($desc)) {
+        // Insérer dans la base de données
+        $query = $cnx->query("INSERT INTO `article` (`userId`, `title`, `content`, `image`, `categId`) 
+                              VALUES ('$user', '$title', '$desc', '$img', '$catg')");
+        if ($query) {
+            header('Location: blog.php');
+        } else {
+            die("Erreur SQL : " . $cnx->error);
+        }
+    }
+}
 
 
-// $query = "SELECT * FROM `article` ORDER BY `created_at` DESC";
-// $result = mysqli_query($cnx, $query);
+$query = "SELECT * FROM `article` ORDER BY `created_at` DESC";
+$result = mysqli_query($cnx, $query);
 ?>
 
 
@@ -267,7 +267,7 @@ $articles = $sql->fetch_all(MYSQLI_ASSOC);
             <!-- Sample Article Card -->
              <?php foreach($articles as $art){ ?>
             <article class="bg-white rounded-lg shadow-md overflow-hidden fade-in active h-auto ">
-                <img src=".<?php echo $art['image']?>" alt="Article image" class="w-full h-48 object-cover">
+                <img src="<?php echo $art['image']?>" alt="Article image" class="w-full h-48 object-cover">
                 <div class="p-6">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-primary text-sm font-semibold">
