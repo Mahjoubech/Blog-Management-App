@@ -10,27 +10,6 @@ include ("./src/datacnx.php");
 //get data articles from database to blog page
 $sql = $cnx->query('SELECT * ,user.username as name , category.name as catname  FROM article join user on  article.userId = user.useId join category on article.categId = category.catId;');
 $articles = $sql->fetch_all(MYSQLI_ASSOC);
- //for time to creat artiicle
- function timeAgo($datetime) {
-    $now = time();
-    $time = strtotime($datetime);
-    $diff = $now - $time;
-
-    if ($diff < 60) {
-        return 'just now';
-    } elseif ($diff < 3600) {
-        $minutes = floor($diff / 60);
-        return $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
-    } elseif ($diff < 86400) {
-        $hours = floor($diff / 3600);
-        return $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
-    } elseif ($diff < 2592000) {
-        $days = floor($diff / 86400);
-        return $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
-    } else {
-        return date('M d, Y', $time);
-    }
-}
 //add article from user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addArt'])) {
     $user = $_SESSION['user']['useId'];
@@ -50,10 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addArt'])) {
         }
     }
 }
-
-
-$query = "SELECT * FROM `article` ORDER BY `created_at` DESC";
-$result = mysqli_query($cnx, $query);
+//delet category
+if(isset($_GET['idcatgr'])){
+    $catgrId = $_GET['idcatgr'];
+ $delet = $cnx->prepare('DELETE FROM category WHERE catId=?');
+ $delet->execute([$catgrId]); 
+ header('Location: category.php');
+ }
 ?>
 
 
@@ -273,14 +255,16 @@ $result = mysqli_query($cnx, $query);
                         <span class="text-primary text-sm font-semibold">
                             <i class="fas fa-tag mr-1"></i><?php echo $art['catname']?>
                         </span>
+                        <?php if (isset($_SESSION['user']) && $_SESSION['user']['useId'] === $art['userId']) { ?>
                         <div class="flex space-x-2">
                             <button class="text-blue-500 hover:text-blue-700">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="text-red-500 hover:text-red-700">
+                            <a href="blog.php?idArt=<?php echo $art['art_Id']?>"><button class="text-red-500 hover:text-red-700">
                                 <i class="fas fa-trash"></i>
-                            </button>
+                            </button></a>
                         </div>
+                        <?php }?>
                     </div>
 
                     <div class="flex items-center mb-3 text-neutral text-sm">
@@ -343,6 +327,7 @@ $result = mysqli_query($cnx, $query);
                     </div>
                 </div>
             </article>
+
              <?php }?>
            
         </div>
