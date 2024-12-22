@@ -9,6 +9,8 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
   $client = $stmt->fetch_assoc();
   $stmt = $cnx->query("SELECT COUNT(*) AS total_art FROM article");
   $articls = $stmt->fetch_assoc();
+  $stmt = $cnx->query("SELECT COUNT(*) AS total_cmnt FROM comments");
+  $cmntes = $stmt->fetch_assoc();
 
 
 
@@ -151,13 +153,13 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
                     </div>
                     <div class="card">
                         <div class="card-head">
-                            <h2>20</h2>
+                            <h2><?php echo $cmntes['total_cmnt'] ?></h2>
                             <span ><i class="fa-regular fa-comment"></i></span>
                         </div>
                         <div class="card-progress">
                             <small>how many comments</small>
                             <div class="card-indicator">
-                                <div class="indicator three" style="width: 65%"></div>
+                                <div class="indicator three" style="width: <?php echo $cmntes['total_cmnt'] ?>%"></div>
                             </div>
                         </div>
                     </div>
