@@ -173,16 +173,17 @@ if(isset($_GET['commId'])){
                         </form>
                    
                         <div class="browse">
-                        <select name="" id="">
+                      
+                        <form method="post" action="editcmment.php?cmmEdit=<?php echo $tab['cmmId']?>" class="flex ">
+                        <div class="add">
+                        <select name="slctart" id="">
                                 <option value="" disabled selected>Article</option>
                                 <?php foreach($artcles as $artc){?>
                                 <option value="<?php echo $artc['art_Id'] ?>"><?php echo $artc['title'] ?></option>
 
                                 <?php }?>    
                         </select>
-                        <form method="post" action="category.php" class="flex ">
-                        <div class="add">
-                          <input class="ml-5" name="namecat" type="text" placeholder="enter comment" value="<?php echo isset($tab['cmnter'])?  $tab['cmnter'] : ''?>">
+                          <input class="ml-5" name="namecmnt" type="text" placeholder="enter comment" value="<?php echo isset($tab['cmnter'])?  $tab['cmnter'] : ''?>">
                           <button type="submit" name="addcmnt"> EDIT </button>
 
                                 </div>
