@@ -58,6 +58,30 @@ if(isset($_GET['idArt'])){
   //get data articles from database 
   $sql = $cnx->query('SELECT * ,user.username as name , article.title as arttitle  FROM comments join user on  comments.user_id = user.useId join article on comments.article_id = article.art_Id order by cmmId;');
   $cmnts= $sql->fetch_all(MYSQLI_ASSOC);
+  //add cmnt
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addcmnt'])) {
+    $user = $_SESSION['user']['useId'];
+    $artc = $_POST['idArtcmnt'];
+    $title = $_POST['comntpost'];
+
+    if (!empty($artc) && !empty($title) ) {
+        // Insérer dans la base de données
+        $query = $cnx->query("INSERT INTO `comments` (`article_id`, `user_id`, `cmnter`) 
+                              VALUES ('$artc', '$user', '$title')");
+        if ($query) {
+            header('Location: blog.php');
+        } else {
+            die("Erreur SQL : " . $cnx->error);
+        }
+    }
+}
+//number commnetr
+// Fetch comment counts
+$commentCounts = [];
+$result = $cnx->query("SELECT article_id, COUNT(*) AS total_comments FROM comments GROUP BY article_id");
+while ($row = $result->fetch_assoc()) {
+    $commentCounts[$row['article_id']] = $row['total_comments'];
+}
 ?>
 
 
@@ -291,11 +315,15 @@ if(isset($_GET['idArt'])){
                             
                             <!-- Comment Form -->
                             <div class="comment-form comment-slide mt-4">
-                                <form class="space-y-4">
-                                    <textarea placeholder="Write your comment..." class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="3"></textarea>
-                                    <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90">
-                                        <i class="fas fa-paper-plane mr-1"></i>Post Comment
+                                <form method="post" action="blog.php" class="space-y-4">
+                                <input type="hidden" name="idArtcmnt" value="<?php echo $art['art_Id']; ?>">
+                                    <textarea placeholder="Write your comment..." class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="3" name="comntpost"></textarea>                                    <button type="submit" name="addcmnt" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90">
+                                            
+                                    <i class="fas fa-paper-plane mr-1"></i>
+                                        Post Comment 
                                     </button>
+                                  
+                                    
                                 </form>
                             </div>
                         </div>
@@ -307,9 +335,13 @@ if(isset($_GET['idArt'])){
                                 <i class="far fa-heart"></i>
                                 <span class="ml-1">42</span>
                             </button>
+                            <button class="text-neutral text-primary hover:text-primary">
+                                <i class="fas fa-heart"></i>
+                                <span class="ml-1">42</span>
+                            </button>
                             <button class="text-neutral hover:text-primary comment-toggle">
                                 <i class="far fa-comment"></i>
-                                <span class="ml-1">12</span>
+                                <span class="ml-1"> <?php echo isset($commentCounts[$art['art_Id']]) ? $commentCounts[$art['art_Id']] : 0; ?></span>
                             </button>
                         </div>
                         <span class="text-neutral text-sm">
@@ -387,13 +419,13 @@ if(isset($_GET['idArt'])){
 
         
         // Like Button Animation
-        document.querySelectorAll('.fa-heart').forEach(heart => {
-            heart.addEventListener('click', () => {
-                heart.classList.toggle('fas');
-                heart.classList.toggle('far');
-                heart.closest('button').classList.toggle('text-primary');
-            });
-        });
+        // document.querySelectorAll('.fa-heart').forEach(heart => {
+        //     heart.addEventListener('click', () => {
+        //         heart.classList.toggle('fas');
+        //         heart.classList.toggle('far');
+        //         heart.closest('button').classList.toggle('text-primary');
+        //     });
+        // });
     </script>
 </body>
 </html>
