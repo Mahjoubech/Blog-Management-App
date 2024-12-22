@@ -29,7 +29,7 @@ include '.././src/datacnx.php';
         $_SESSION['errors'] = $errors;
         print_r($_SESSION['errors']);
         unset($_SESSION['errors']);
-     header('Location: category.php');
+        header('Location: category.php');
         exit;
      }
 }
