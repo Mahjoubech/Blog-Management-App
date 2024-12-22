@@ -39,9 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addArt'])) {
 
 //delet article
 if(isset($_GET['articleId'])){
-    $catgrId = $_GET['articleId'];
+    $artid = $_GET['articleId'];
  $delet = $cnx->prepare('DELETE FROM article WHERE art_Id=?');
- $delet->execute([$catgrId]); 
+ $delet->execute([$artid]); 
  header('Location: article.php');
  }
 
