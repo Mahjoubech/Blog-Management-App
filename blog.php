@@ -361,7 +361,7 @@ while ($row = $result->fetch_assoc()) {
                                                 <i class="fas fa-clock mr-1"></i><?php echo $cmt['created_at']?>
                                             </p>
                                         </div>
-                                        <?php if ($_SESSION['user']['useId'] === $cmt['user_id']) { ?>
+                                        <?php if (isset($_SESSION['user']) && $_SESSION['user']['useId'] === $cmt['user_id']) { ?>
                        
                                       <a href="blog.php?deletcmnt=<?php echo $cmt['cmmId']?>"><button class="text-red-500 hover:text-red-700 ml-[100px]">
                                         <i class="fas fa-trash"></i>
