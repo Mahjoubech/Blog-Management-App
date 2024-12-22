@@ -37,6 +37,16 @@ if(isset($_GET['commId'])){
  $delet->execute([$cmmId]); 
  header('Location: comments.php');
  }
+ //get data from table to edit 
+  if(isset($_GET['commIdedit'])){
+
+    $id = $_GET['commIdedit'];
+    $edit = "SELECT * FROM `comments` WHERE cmmId = $id";
+    $result = mysqli_query($cnx, $edit);
+    $tab = mysqli_fetch_assoc($result);
+
+   
+}
    ?>
 
 <!DOCTYPE html>
@@ -172,8 +182,8 @@ if(isset($_GET['commId'])){
                         </select>
                         <form method="post" action="category.php" class="flex ">
                         <div class="add">
-                          <input class="ml-5" name="namecat" type="text" placeholder="enter comment">
-                          <button type="submit" name="addcat"> EDIT </button>
+                          <input class="ml-5" name="namecat" type="text" placeholder="enter comment" value="<?php echo isset($tab['cmnter'])?  $tab['cmnter'] : ''?>">
+                          <button type="submit" name="addcmnt"> EDIT </button>
 
                                 </div>
                        
@@ -220,7 +230,7 @@ if(isset($_GET['commId'])){
                                     <td>
                                         <div class="actions ml-3">
                                         <a href="comments.php?commId=<?php echo $cmt['cmmId']?>"><span ><i class="fa-solid fa-trash"></i></span></a>
-                                        <a href="article.php?articleIdedit=<?php echo $art['art_Id']?>"><span  class="ml-7 editbtn"><i class="fa-regular fa-pen-to-square"></i></span></a>
+                                        <a href="comments.php?commIdedit=<?php echo $cmt['cmmId']?>"><span  class="ml-7 editbtn"><i class="fa-regular fa-pen-to-square"></i></span></a>
                         
                                         </div>
                                     </td>
