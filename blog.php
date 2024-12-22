@@ -8,12 +8,12 @@ include ("./src/datacnx.php");
  //Get values
  $category = $sqldata->fetch_all(MYSQLI_ASSOC);
 //get data articles from database to blog page
-$sql = $cnx->query('SELECT * ,user.username as name , category.name as catname  FROM article join user on  article.userId = user.useId join category on article.categId = category.catId;');
+$sql = $cnx->query('SELECT * ,user.username as name , category.name as catname  FROM article  join user on  article.userId = user.useId join category on article.categId = category.catId  order by art_Id desc ;');
 $articles = $sql->fetch_all(MYSQLI_ASSOC);
 //add article from user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addArt'])) {
     $user = $_SESSION['user']['useId'];
-    $catg = $_POST['selectCat'];
+    $catg = $_POST['slectCat'];
     $title = $_POST['titleblog'];
     $img = $_POST['lienimage'];
     $desc = $_POST['descrp'];
@@ -30,12 +30,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addArt'])) {
     }
 }
 //delet category
-if(isset($_GET['idcatgr'])){
-    $catgrId = $_GET['idcatgr'];
- $delet = $cnx->prepare('DELETE FROM category WHERE catId=?');
- $delet->execute([$catgrId]); 
- header('Location: category.php');
+if(isset($_GET['idArt'])){
+    $artid = $_GET['idArt'];
+    $delet = $cnx->prepare('DELETE FROM article WHERE art_Id=?');
+    $delet->execute([$artid]);
+ header('Location: blog.php');
  }
+
+ //get value for edit
+   //Get values
+   if(isset($_GET['idArtedt'])){
+   
+       $id = $_GET['idArtedt'];
+       $edit = "SELECT * FROM `article` WHERE art_Id = $id";
+       $result = mysqli_query($cnx, $edit);
+       $cos = mysqli_fetch_assoc($result);
+       if(isset($cos)) {
+           echo "<script>
+               console.log(document.getElementById('articleFormedit'));
+               document.addEventListener('DOMContentLoaded', () => {
+                   document.getElementById('articleFormedit').classList.toggle('active');
+               })
+           </script>";
+          
+       }
+   }
 ?>
 
 
@@ -49,94 +68,12 @@ if(isset($_GET['idcatgr'])){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Blog Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="tailwind.config.js"></script>
+    <link rel="stylesheet" href="./css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#22BAA0',
-                        secondary: '#34425A',
-                        neutral: '#B0B0B0',
-                    }
-                }
-            }
-        }
+     
     </script>
-    <style>
-        .slide-down {
-            display: none;
-            transition: all 0.5s ease-in-out;
-        }
-
-        .slide-down.active {
-            display: block;
-        }
-
-        .fade-in {
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        .fade-in.active {
-            opacity: 1;
-        }
-
-        .comment-slide {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-in-out;
-        }
-
-        .comment-slide.active {
-            max-height: 500px;
-        }
-
-        .new-comment {
-            animation: slideDown 0.5s ease-out;
-        }
-        .adminicons{
-            position: relative;
-            left: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-           margin-left: 40px;
-           cursor: pointer;
-           transition: all 0.5s ease;
-        }
-        .adminicons:hover{
-            transform: scale(1.02);
-        }
-
-        .adminicons i{
-            font-size: 16px;
-            background-color: #22BAA0;
-            padding: 14px;
-            border-radius: 50%;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .adminicons h5{
-            margin-top: 0;
-            transform: translateX(-15px);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-size: 10px;
-        }
-        @keyframes slideDown {
-            from {
-                height: 0;
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                height: auto;
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-    </style>
 </head>
 <body class="bg-gray-100">
     <!-- Navigation -->
@@ -213,13 +150,13 @@ if(isset($_GET['idcatgr'])){
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-heading mr-1"></i>Title
                     </label>
-                    <input name="titleblog" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <input name="titleblogedt" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
                 </div>
                 <div class="mb-4">
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-tag mr-1"></i>Category
                     </label>
-                    <select name="selectCat" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <select name="slectCatedt" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
                     <option value="" disabled selected>Select category </option>
                     <?php foreach($category as $catg){?>
                     <option value="<?php echo $catg['catId']?>"><?php echo $catg['name']?></option>
@@ -230,20 +167,60 @@ if(isset($_GET['idcatgr'])){
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-paragraph mr-1"></i>Content
                     </label>
-                    <textarea name="descrp" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="6"></textarea>
+                    <textarea name="descrpedt" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="6"></textarea>
                 </div>
                 <div class="mb-4">
                     <label class="block text-secondary mb-2">
                         <i class="fas fa-image mr-1"></i>Image
                     </label>
-                    <input name="lienimage" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <input name="lienimageedt" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
                 </div>
-                <button name="addArt" type="submit" class="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90">
+                <button name="addArtedt" type="submit" class="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90">
                     <i class="fas fa-paper-plane mr-1"></i>Publish
                 </button>
             </form>
         </div>
 
+        <!-------------- Edit article format ------------------>
+        <div id="articleFormedit" class="slide-down bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-secondary">
+                <i class="fas fa-pen-to-square mr-2"></i>Update Article
+            </h2>
+            <form method="post" action="blog.php">
+                <div class="mb-4">
+                    <label class="block text-secondary mb-2">
+                        <i class="fas fa-heading mr-1"></i>New Title
+                    </label>
+                    <input name="titleblog" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"  value="<?php if(isset($cos['title'])) echo $cos['title']?>" >
+                </div>
+                <div class="mb-4">
+                    <label class="block text-secondary mb-2">
+                        <i class="fas fa-tag mr-1"></i>New Category
+                    </label>
+                    <select name="selectCat" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary">
+                    <option value="" disabled selected>Select category </option>
+                    <?php foreach($category as $catg){?>
+                    <option value="<?php echo $catg['catId']?>"><?php echo $catg['name']?></option>
+                    <?php } ?>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-secondary mb-2">
+                        <i class="fas fa-paragraph mr-1"></i>New Content
+                    </label>
+                    <textarea name="descrp" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" rows="6"><?php if(isset($cos['content'])) echo $cos['content']?></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-secondary mb-2">
+                        <i class="fas fa-image mr-1"></i>New Image
+                    </label>
+                    <input name="lienimage" type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary" value=" <?php if(isset($cos['image'])) echo $cos['image']?>">
+                </div>
+                <button name="EDITart" type="submit" class="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90">
+                    <i class="fas fa-paper-plane mr-1"></i>Edit
+                </button>
+            </form>
+        </div>
         <!-- Articles Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Sample Article Card -->
@@ -257,8 +234,8 @@ if(isset($_GET['idcatgr'])){
                         </span>
                         <?php if (isset($_SESSION['user']) && $_SESSION['user']['useId'] === $art['userId']) { ?>
                         <div class="flex space-x-2">
-                            <button class="text-blue-500 hover:text-blue-700">
-                                <i class="fas fa-edit"></i>
+                        <a href="blog.php?idArtedt=<?php echo $art['art_Id']?>"> <button id="editId" class="text-blue-500 hover:text-blue-700">
+                                <i class="fas fa-edit"></i></button></a>
                             </button>
                             <a href="blog.php?idArt=<?php echo $art['art_Id']?>"><button class="text-red-500 hover:text-red-700">
                                 <i class="fas fa-trash"></i>
@@ -341,6 +318,7 @@ if(isset($_GET['idcatgr'])){
         addArticleBtn.addEventListener('click', () => {
             articleForm.classList.toggle('active');
         });
+        
 
         // Category Filter
         const categoryButtons = document.querySelectorAll('.category-filter');
