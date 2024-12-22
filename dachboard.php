@@ -11,8 +11,8 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
   $articls = $stmt->fetch_assoc();
   $stmt = $cnx->query("SELECT COUNT(*) AS total_cmnt FROM comments");
   $cmntes = $stmt->fetch_assoc();
-
-
+  $stmt = $cnx->query("SELECT COUNT(*) AS total_like FROM likes");
+  $likess = $stmt->fetch_assoc();
 
 
 
@@ -145,9 +145,9 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
                             <span ><i class="fa-regular fa-thumbs-up"></i></span>
                         </div>
                         <div class="card-progress">
-                            <small>liks </small>
+                            <small><?php echo $likess['total_like'] ?> </small>
                             <div class="card-indicator">
-                                <div class="indicator two" style="width: 80%"></div>
+                                <div class="indicator two" style="width: <?php echo $likess['total_like'] ?>%"></div>
                             </div>
                         </div>
                     </div>
