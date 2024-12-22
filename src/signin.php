@@ -42,7 +42,6 @@
             $_SESSION['user'] = $resultUser;
             header('location: ../blog.php');
         }
-        
     }else{
         echo "error ";
         

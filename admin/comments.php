@@ -5,6 +5,15 @@
      header("Location: blog.php"); 
      exit();
    }
+    //Requets
+$sqldata= $cnx->query('SELECT art_Id,title from article ');
+//Get values
+$artcles = $sqldata->fetch_all(MYSQLI_ASSOC);
+   //get data from data base
+   //get data articles from database 
+   $sql = $cnx->query('SELECT * ,user.username as name , article.title as arttitle  FROM comments join user on  comments.user_id = user.useId join article on comments.article_id = article.art_Id;');
+   $cmnts= $sql->fetch_all(MYSQLI_ASSOC);
+
    ?>
 
 <!DOCTYPE html>
@@ -27,14 +36,12 @@
                     <h1 class="text-xl font-bold">BlogPlatform</h1>
                 </div>
         </div>
-        
         <div class="side-content">
             <div class="profile">
                 <div class="profile-img bg-img" style="background-image: url(img/3.jpeg)"></div>
                 <h4><?php echo $_SESSION['user']['username']?></h4>
                 <small>Admin</small>
             </div>
-
             <div class="side-menu">
                 <ul>
                     <li>
@@ -114,12 +121,42 @@
             <div class="page-content">
 
                 <div class="records table-responsive">
+             
                     <div class="record-header">
-                        <div class="browse">
-                           <input type="search" placeholder="Search" class="record-search">
-                            <select name="" id="">
-                                <option value="">Filtter</option>
+                    <form method="post" action="comments.php" class="flex ">
+                        <div class="add">
+                          <button type="submit" name="addcmnt"> Add </button>
+                          <input class="ml-5" name="contcmnt" type="text" placeholder="enter comment">
+                       </div>
+                       <div class="browse">
+                       <select name="slctart" id="">
+                                <option value="" disabled selected>Article</option>
+                                <?php foreach($artcles as $artc){?>
+                                <option value="<?php echo $artc['art_Id'] ?>"><?php echo $artc['title'] ?></option>
+
+                                <?php }?>    
                             </select>
+                       </div>
+                        </form>
+                   
+                        <div class="browse">
+                        <select name="" id="">
+                                <option value="" disabled selected>Article</option>
+                                <?php foreach($artcles as $artc){?>
+                                <option value="<?php echo $artc['art_Id'] ?>"><?php echo $artc['title'] ?></option>
+
+                                <?php }?>    
+                        </select>
+                        <form method="post" action="category.php" class="flex ">
+                        <div class="add">
+                          <input class="ml-5" name="namecat" type="text" placeholder="enter comment">
+                          <button type="submit" name="addcat"> EDIT </button>
+
+                                </div>
+                       
+                        </form>
+                           
+                           
                         </div>
                     </div>
 
@@ -128,34 +165,34 @@
                             <thead>
                                 <tr>
                                     <th class="las la-sort">ID</th>
-                                    <th><span class="las la-sort"></span>VISIT EMAIL </th>
-                                    <th><span class="las la-sort"></span>VISIT NAME</th>
+                                    <th><span class="las la-sort"></span>ARTICLE TITLE</th>
+                                    <th><span class="las la-sort"></span> USENAME</th>
                                     <th><span class="las la-sort"></span>CONTENT</th>
                                     <th><span class="las la-sort"></span> DATE CREAT</th>
                                     <th><span class="las la-sort"></span> ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php foreach($cmnts as $cmt){ ?>
                                 <tr>
-                                    <td>#1</td>
+                                    <td>#<?php echo $cmt['cmmId']; ?></td>
                                     <td>
                       
                                  
                                               
-                                                <small>bruno@crossover.org</small>
+                                                <small><?php echo $cmt['arttitle'] ;?></small>
                                             
                                         </div>
                                     </td>
                                     <td>
-                            
-                                                Andrew Bruno
+                                          <?php echo $cmt['name'];?>
                         
                                     </td>
                                     <td>
-                                        hach pass
+                                    <?php echo $cmt['cmnter'];?>
                                     </td>
                                     <td>
-                                    18 December, 2024
+                                    <?php echo $cmt['created_at'];?>
                                     </td>
                                     <td>
                                         <div class="actions ml-3">
@@ -166,7 +203,7 @@
                                     </td>
                                 </tr>
                                
-                                
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>

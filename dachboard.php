@@ -7,7 +7,8 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
   }
   $stmt = $cnx->query("SELECT COUNT(*) AS total_user FROM user");
   $client = $stmt->fetch_assoc();
-
+  $stmt = $cnx->query("SELECT COUNT(*) AS total_art FROM article");
+  $articls = $stmt->fetch_assoc();
 
 
 
@@ -126,7 +127,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
 
                     <div class="card">
                         <div class="card-head">
-                            <h2><?php echo $client['total_user'] ?></h2>
+                            <h2><?php echo $client['total_user']?> </h2>
                             <span class="las la-user-friends"></span>
                         </div>
                         <div class="card-progress">
@@ -136,7 +137,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
                             </div>
                         </div>
                     </div>
-
                     <div class="card">
                         <div class="card-head">
                             <h2>100</h2>
@@ -149,7 +149,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
                             </div>
                         </div>
                     </div>
-
                     <div class="card">
                         <div class="card-head">
                             <h2>20</h2>
@@ -165,13 +164,13 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 1 ) {
 
                     <div class="card">
                         <div class="card-head">
-                            <h2>45</h2>
+                            <h2><?php echo $articls['total_art']?></h2>
                             <span ><i class="fa-solid fa-newspaper"></i></span>
                         </div>
                         <div class="card-progress">
                             <small>How many Article creat</small>
                             <div class="card-indicator">
-                                <div class="indicator four" style="width: 90%"></div>
+                                <div class="indicator four" style="width: <?php echo $articls['total_art']?>%"></div>
                             </div>
                         </div>
                     </div>
